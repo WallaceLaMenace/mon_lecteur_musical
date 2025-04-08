@@ -106,6 +106,10 @@ function App() {
 
   const currentTrack = playlist[currentTrackIndex];
 
+  // Calcule le pourcentage de progression pour la barre stylée
+  const progressPercent = duration ? (currentTime / duration) * 100 : 0;
+
+
   if (playlist.length === 0) {
     return <div>Chargement de la playlist...</div>;
   }
@@ -114,9 +118,9 @@ function App() {
     <div className="player-container">
       <div className="cover-art">
         <img
-          src={currentTrack?.coverSrc || '/default-cover.png'} // Image par défaut si pas de jaquette
+          src={currentTrack?.coverSrc || '/default-cover.png'}
           alt={`Jaquette de ${currentTrack?.title}`}
-          onError={(e) => e.target.src = '/default-cover.png'} // Fallback si image non trouvée
+          onError={(e) => e.target.src = '/default-cover.png'}
         />
       </div>
 
@@ -125,13 +129,11 @@ function App() {
         <p>{currentTrack?.artist || "Artiste Inconnu"}</p>
       </div>
 
-      {/* Élément audio caché mais contrôlé par notre UI */}
       <audio
         ref={audioRef}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={handleTrackEnd}
-        // Ne pas afficher les contrôles par défaut
       />
 
       <div className="progress-bar">
@@ -142,22 +144,45 @@ function App() {
           max={duration || 0}
           value={currentTime}
           onChange={handleProgressChange}
-          disabled={!currentTrack} // Désactiver si pas de piste chargée
+          disabled={!currentTrack}
+          // Applique le pourcentage via une variable CSS pour le style de la barre
+          style={{ '--progress-percent': `${progressPercent}%` }}
         />
         <span>{formatTime(duration)}</span>
       </div>
 
+      {/* CONTROLES MIS A JOUR AVEC SVG */}
       <div className="controls">
-        <button onClick={playPrevious} disabled={playlist.length < 2}> {/* Désactiver si < 2 pistes */}
-          ⏮️ {/* Précédent */}
+        <button onClick={playPrevious} disabled={playlist.length < 2} aria-label="Précédent">
+          {/* Icône Précédent (SVG) */}
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"></path>
+          </svg>
         </button>
-        <button onClick={togglePlayPause} className="play-pause-btn" disabled={!currentTrack}>
-          {isPlaying ? '⏸️' : '▶️'} {/* Pause / Lecture */}
+
+        <button onClick={togglePlayPause} className="play-pause-btn" disabled={!currentTrack} aria-label={isPlaying ? 'Pause' : 'Lecture'}>
+          {isPlaying ? (
+            // Icône Pause (SVG)
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
+            </svg>
+          ) : (
+            // Icône Play (SVG)
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 5v14l11-7z"></path>
+            </svg>
+          )}
         </button>
-        <button onClick={playNext} disabled={playlist.length < 2}> {/* Désactiver si < 2 pistes */}
-          ⏭️ {/* Suivant */}
+
+        <button onClick={playNext} disabled={playlist.length < 2} aria-label="Suivant">
+           {/* Icône Suivant (SVG) */}
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"></path>
+          </svg>
         </button>
       </div>
+      {/* FIN DES CONTROLES MIS A JOUR */}
+
     </div>
   );
 }
