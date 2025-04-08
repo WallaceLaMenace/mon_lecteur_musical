@@ -1,0 +1,141 @@
+/* src/App.css */
+body {
+  font-family: sans-serif;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.player-container {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 90%;
+  max-width: 400px; /* Limite la largeur sur grand écran */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cover-art img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover; /* S'assure que l'image couvre bien sans se déformer */
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 5px rgba(0,0,0, 0.1);
+}
+
+.track-info h2 {
+  margin: 10px 0 5px;
+  font-size: 1.2em;
+  color: #333;
+}
+
+.track-info p {
+  margin: 0 0 15px;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.progress-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  gap: 10px; /* Espace entre les éléments */
+}
+
+.progress-bar input[type="range"] {
+  flex-grow: 1; /* Prend l'espace restant */
+  cursor: pointer;
+  height: 5px;
+  background: #ddd; /* Couleur de fond de la barre */
+  border-radius: 5px;
+  appearance: none; /* Enlève le style par défaut */
+  -webkit-appearance: none;
+}
+/* Style pour la "poignée" du curseur (Chrome/Edge/Safari) */
+.progress-bar input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 15px;
+    height: 15px;
+    background: #555;
+    border-radius: 50%;
+    cursor: pointer;
+}
+/* Style pour la "poignée" du curseur (Firefox) */
+ .progress-bar input[type="range"]::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    background: #555;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none; /* Firefox ajoute parfois une bordure */
+}
+
+.progress-bar span {
+  font-size: 0.8em;
+  color: #555;
+  min-width: 35px; /* Assure un minimum de largeur pour le temps */
+  text-align: center;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* Espace entre les boutons */
+}
+
+.controls button {
+  background: none;
+  border: none;
+  font-size: 1.8em; /* Taille des icônes emoji */
+  cursor: pointer;
+  padding: 5px;
+  color: #333;
+  transition: transform 0.1s ease;
+}
+
+.controls button:disabled {
+  color: #bbb; /* Griser les boutons désactivés */
+  cursor: not-allowed;
+}
+
+
+.controls button:active:not(:disabled) {
+  transform: scale(0.9); /* Effet de clic */
+}
+
+.controls .play-pause-btn {
+  font-size: 2.5em; /* Bouton play/pause plus grand */
+}
+
+/* Styles pour rendre responsive (très basique ici) */
+@media (max-width: 480px) {
+  .player-container {
+    width: 95%;
+    padding: 15px;
+  }
+  .cover-art img {
+    width: 150px;
+    height: 150px;
+  }
+  .track-info h2 {
+    font-size: 1.1em;
+  }
+  .controls button {
+    font-size: 1.5em;
+  }
+  .controls .play-pause-btn {
+    font-size: 2.2em;
+  }
+}
