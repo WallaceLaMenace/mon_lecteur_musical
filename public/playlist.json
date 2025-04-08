@@ -38,7 +38,7 @@
     "id": 6,
     "title": "ça commence par P...",
     "artist": "Wallace",
-    "audioSrc": "audio/prout.mp3",
+    "audioSrc": "/audio/prout.mp3",
     "coverSrc": "/covers/prout1.png"
   },
   {
