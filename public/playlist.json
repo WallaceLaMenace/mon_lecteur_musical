@@ -4,48 +4,48 @@
     "title": "En shooort song",
     "artist": "Wallace",
     "mp3": "/audio/enshooortsong.mp3",
-    "image": "/images/enshoortsong.png"
+    "image": "/covers/enshoortsong.png"
   },
   {
     "id": 2,
     "title": "Le Gala",
     "artist": "Wallace",
     "mp3": "/audio/legala.mp3",
-    "image": "/images/Gala.png"
+    "image": "/covers/Gala.png"
   },
   {
     "id": 3,
     "title": "MS(R)EUM (Official Music)",
     "artist": "Wallace",
     "mp3": "/audio/msr.mp3",
-    "image": "/images/MSEUM.png"
+    "image": "/covers/MSEUM.png"
   },
   {
     "id": 4,
     "title": "Un génie heure",
     "artist": "Wallace",
     "mp3": "/audio/ungenieheure.mp3",
-    "image": "/images/ungenieheure.png"
+    "image": "/covers/ungenieheure.png"
   },
   {
     "id": 5,
     "title": "Un génie heure (version chill)",
     "artist": "Wallace",
     "mp3": "/audio/ungenieheure2.mp3",
-    "image": "/images/ungenieheure2.png"
+    "image": "/covers/ungenieheure2.png"
   },
   {
     "id": 6,
     "title": "ça commence par P...",
     "artist": "Wallace",
     "mp3": "audio/prout.mp3",
-    "image": "/images/prout1.png"
+    "image": "/covers/prout1.png"
   },
   {
     "id": 7,
     "title": "ça commence par P...(pour les enfants)",
     "artist": "Wallace",
     "mp3": "/audio/proutpourlesenfants.mp3",
-    "image": "/images/prout pour les enfants.png"
+    "image": "/covers/prout pour les enfants.png"
   }
 ]
