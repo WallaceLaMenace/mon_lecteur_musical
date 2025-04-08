@@ -96,15 +96,15 @@ function App() {
   };
 
   // ----- Formatage du temps -----
- const formatTime = (timeInSeconds) => {
-   if (isNaN(timeInSeconds) || timeInSeconds === 0) {
-      return '0:00'; // Gérer NaN ou 0 explicitement
-   }
-   const minutes = Math.floor(timeInSeconds / 60);
-   const seconds = Math.floor(timeInSeconds % 60);
-   // Retourne bien une chaîne formatée
-   return `<span class="math-inline">\{minutes\}\:</span>{seconds < 10 ? '0' : ''}${seconds}`;
- };
+    const formatTime = (timeInSeconds) => {
+      if (isNaN(timeInSeconds) || timeInSeconds === 0) {
+         return '0:00';
+      }
+      const minutes = Math.floor(timeInSeconds / 60);
+      const seconds = Math.floor(timeInSeconds % 60);
+      // Retourne UNIQUEMENT la chaîne MM:SS
+      return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`; // <<-- LIGNE CORRIGÉE
+    };
 
   // ----- Rendu du composant -----
 
