@@ -165,10 +165,152 @@ body {
 }
 
 .controls button svg { /* Style pour les icônes SVG */
-  width: 22px; /* Taille icônes Préc/Suivant */
-  height: 22px;
+  width: 32px; /* Taille icônes Préc/Suivant */
+  height: 32px;
   fill: currentColor; /* Utilise la couleur du bouton */
 }
 
 .controls button:hover:not(:disabled) {
   color: var(--spotify-white
+
+/* Style du bouton pour basculer la vue */
+.toggle-view-btn {
+  position: absolute; /* Positionnement absolu par rapport au conteneur */
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: var(--spotify-light-gray);
+  cursor: pointer;
+  padding: 5px;
+  z-index: 10; /* Pour être au-dessus d'autres éléments si besoin */
+}
+
+.toggle-view-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.toggle-view-btn:hover {
+  color: var(--spotify-white);
+}
+
+/* Style de la vue Liste de lecture */
+.playlist-title {
+  color: var(--spotify-white);
+  font-size: 1.2em;
+  margin-top: 10px; /* Ajuster l'espace après le bouton toggle */
+  margin-bottom: 15px;
+  font-weight: 600;
+  width: 100%; /* Prendre toute la largeur */
+  text-align: center; /* Centrer le titre */
+}
+
+.playlist-list {
+  width: 100%;
+  max-height: 60vh; /* Hauteur max, permet le scroll */
+  overflow-y: auto; /* Activer le scroll vertical si besoin */
+  margin-bottom: 20px; /* Espace avant les contrôles */
+  /* Style de la barre de scroll (optionnel mais plus joli) */
+  scrollbar-width: thin;
+  scrollbar-color: var(--spotify-gray) transparent;
+}
+/* Pour Chrome/Edge/Safari */
+.playlist-list::-webkit-scrollbar {
+  width: 8px;
+}
+.playlist-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.playlist-list::-webkit-scrollbar-thumb {
+  background-color: var(--spotify-gray);
+  border-radius: 4px;
+}
+
+
+.playlist-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  text-align: left; /* Aligner texte à gauche */
+}
+
+.playlist-item:hover {
+  background-color: var(--spotify-gray);
+}
+
+.playlist-item.playing {
+  background-color: rgba(40, 40, 40, 0.8); /* Fond légèrement différent si en cours */
+  /* Ou une autre indication */
+}
+
+
+.playlist-item-cover {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 12px;
+  flex-shrink: 0; /* Empêche l'image de rétrécir */
+}
+
+.playlist-item-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Prend l'espace restant */
+  overflow: hidden; /* Empêche le texte de déborder */
+}
+
+.playlist-item-title {
+  color: var(--spotify-white);
+  font-size: 0.9em;
+  font-weight: 500;
+  white-space: nowrap; /* Empêche le retour à la ligne */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Ajoute ... si trop long */
+}
+
+.playlist-item-artist {
+  color: var(--spotify-light-gray);
+  font-size: 0.8em;
+   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.playing-indicator {
+    width: 20px;
+    height: 20px;
+    margin-left: 10px; /* Espace par rapport au texte */
+    flex-shrink: 0;
+}
+.playing-indicator.paused path {
+   fill: var(--spotify-light-gray); /* Couleur différente si en pause */
+}
+
+
+.playlist-empty {
+    color: var(--spotify-light-gray);
+    padding: 20px;
+    text-align: center;
+}
+
+/* Conteneur pour les contrôles pour s'assurer qu'ils restent en bas */
+.player-controls-area {
+    width: 100%;
+    margin-top: auto; /* Pousse cette zone vers le bas si le contenu est court */
+    padding-top: 10px; /* Un peu d'espace au dessus de la barre */
+}
+
+
+/* Ajustement position bouton toggle si besoin */
+.player-container {
+    /* ... autres styles ... */
+    position: relative; /* Nécessaire pour le positionnement absolu du bouton toggle */
+     padding-top: 50px; /* Ajouter de l'espace en haut pour le bouton toggle */
+}
