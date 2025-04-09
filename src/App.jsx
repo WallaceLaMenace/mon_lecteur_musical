@@ -1,7 +1,7 @@
 // src/App.jsx
 import React, { useState, useEffect, useRef } from 'react';
 // Retire l'import './App.css' d'ici si tu l'as mis (il est dans main.jsx)
-// import './App.css'; // Assure-toi qu'il est importé une seule fois, idéalement dans main.jsx ou App.jsx
+import './App.css'; // Assure-toi qu'il est importé une seule fois, idéalement dans main.jsx ou App.jsx
 
 function App() {
   const [playlist, setPlaylist] = useState([]);
