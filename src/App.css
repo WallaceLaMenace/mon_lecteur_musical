@@ -53,6 +53,10 @@ body {
   flex-direction: column;
   align-items: center;
   /* Retiré : position: relative; et padding-top: 50px; */
+  margin-top: 20px;    /* Marge en haut */
+  margin-bottom: 20px; /* Marge en bas */
+  margin-left: auto;   /* Marge gauche automatique */
+  margin-right: auto;  /* Marge droite automatique */
 }
 
 .cover-art img {
