@@ -397,16 +397,22 @@ body {
       padding: 10px 0; /* Moins de padding vertical */
    }
 
+  /* Conteneur de la vue Lecteur */
   .player-container {
-    width: 100%; /* Prend toute la largeur */
-    max-width: none; /* Pas de max-width */
-    min-height: calc(100vh - 65px); /* Prend hauteur restante */
-    border-radius: 0;
-    justify-content: center; /* Centre verticalement approx */
-    padding: 20px 15px;
-    box-sizing: border-box;
-    margin: 0; /* Pas de marge verticale sur mobile */
-    style={{ border: '3px solid red', marginLeft: 'auto', marginRight: 'auto' }}
+    background-color: var(--spotify-dark-gray);
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    width: 90%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centre le contenu *interne* horizontalement */
+    margin-top: 20px;    /* Marge en haut */
+    margin-bottom: 20px; /* Marge en bas */
+    margin-left: auto;   /* OK, fonctionne avec Grid ou si width<100% */
+    margin-right: auto;  /* OK, fonctionne avec Grid ou si width<100% */
   }
   .cover-art img {
     width: 65vw;
