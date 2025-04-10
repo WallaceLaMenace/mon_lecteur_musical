@@ -1,93 +1,463 @@
 /* src/App.css */
-  /* ... (tous les styles précédents SAUF .toggle-view-btn et modifs .player-container) ... */
 
-  /* Conteneur global pour gérer le padding du bas */
-  .app-wrapper {
+/* Variables de couleur */
+:root {
+  --spotify-black: #121212;
+  --spotify-dark-gray: #1e1e1e;
+  --spotify-gray: #282828;
+  --spotify-light-gray: #b3b3b3;
+  --spotify-white: #ffffff;
+  --spotify-green: #1DB954;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: var(--spotify-black);
+  color: var(--spotify-white);
+  /* Retiré display:flex et align/justify-items d'ici, géré par app-wrapper */
+  min-height: 100vh;
+  margin: 0;
+  /* Important: Espace en bas pour la barre de navigation fixe */
+  padding-bottom: 70px; /* Hauteur de la barre + un peu de marge */
+}
+
+/* Conteneur global */
+.app-wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column; /* Aligne le contenu et la nav verticalement */
+  align-items: center; /* Centre horizontalement */
+  min-height: calc(100vh - 70px); /* Hauteur minimum pour le contenu au-dessus de la nav */
+}
+
+/* Conteneur du contenu principal (lecteur ou liste) */
+.main-content {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Centre verticalement si peu de contenu */
+  flex-grow: 1; /* Prend l'espace vertical disponible */
+  padding: 20px 0; /* Ajoute un peu d'air en haut/bas */
+}
+
+/* Conteneur de la vue Lecteur */
+.player-container {
+  background-color: var(--spotify-dark-gray);
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  width: 90%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Retiré : position: relative; et padding-top: 50px; */
+}
+
+.cover-art img {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0, 0.3);
+}
+
+.track-info h2 {
+  margin: 10px 0 5px;
+  font-size: 1.3em;
+  color: var(--spotify-white);
+  font-weight: 600;
+}
+
+.track-info p {
+  margin: 0 0 20px;
+  font-size: 0.95em;
+  color: var(--spotify-light-gray);
+}
+
+/* Zone des contrôles dans la vue Lecteur */
+.player-controls-area {
     width: 100%;
-    padding-bottom: 70px; /* Espace pour la barre de navigation fixe en bas */
-    display: flex; /* Permet au contenu de prendre la place dispo */
-    justify-content: center; /* Centre le contenu horizontalement */
-    min-height: calc(100vh - 70px); /* Hauteur min pour le contenu */
-  }
+    margin-top: 15px; /* Espace au dessus de la barre de progression */
+}
 
-  /* Conteneur du contenu principal */
-  .main-content {
-     width: 100%; /* Prend toute la largeur dispo */
-     display: flex;
-     justify-content: center;
-     align-items: center; /* Centre verticalement si peu de contenu */
-  }
+.progress-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 10px;
+}
 
-   /* Ajustement conteneur lecteur */
+.progress-bar input[type="range"] {
+  flex-grow: 1;
+  cursor: pointer;
+  height: 4px;
+  background: var(--spotify-gray);
+  border-radius: 5px;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+}
+
+.progress-bar input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 5px;
+  background: linear-gradient(to right, var(--spotify-green) 0%, var(--spotify-green) var(--progress-percent, 0%), var(--spotify-gray) var(--progress-percent, 0%), var(--spotify-gray) 100%);
+}
+
+.progress-bar input[type="range"]::-moz-range-progress {
+  background-color: var(--spotify-green);
+  height: 4px;
+  border-radius: 5px;
+}
+.progress-bar input[type="range"]::-moz-range-track {
+  background-color: var(--spotify-gray);
+  height: 4px;
+  border-radius: 5px;
+}
+
+.progress-bar input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--spotify-white);
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -5px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+.progress-bar input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  background: var(--spotify-white);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.progress-bar:hover input[type="range"]::-webkit-slider-thumb,
+.progress-bar input[type="range"]:focus::-webkit-slider-thumb {
+  opacity: 1;
+}
+.progress-bar:hover input[type="range"]::-moz-range-thumb,
+.progress-bar input[type="range"]:focus::-moz-range-thumb {
+  opacity: 1;
+}
+
+.progress-bar span {
+  font-size: 0.75em;
+  color: var(--spotify-light-gray);
+  min-width: 35px;
+  text-align: center;
+}
+
+/* Styles des boutons Préc/Suivant/Play */
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+  margin-top: 15px;
+  width: 100%;
+}
+
+.controls button {
+  background: none;
+  border: none;
+  color: var(--spotify-light-gray);
+  cursor: pointer;
+  padding: 5px;
+  transition: color 0.2s ease, transform 0.1s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Taille icônes Précédent / Suivant */
+.controls button:not(.play-pause-btn) svg {
+  width: 28px; /* Taille ajustée comme demandé */
+  height: 28px;
+  fill: currentColor;
+}
+
+/* Correction de l'erreur de syntaxe ici (accolade manquante) */
+.controls button:hover:not(:disabled) {
+  color: var(--spotify-white);
+} /* <<-- Accolade fermante ajoutée ici */
+
+.controls button:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+.controls button:disabled {
+  color: var(--spotify-gray);
+  cursor: not-allowed;
+}
+
+/* Style spécifique bouton Play/Pause (Vérifier/Ajuster tailles) */
+.controls .play-pause-btn {
+  background-color: var(--spotify-white);
+  color: var(--spotify-black);
+  border-radius: 50%;
+  width: 60px;  /* Taille comme demandé */
+  height: 60px; /* Taille comme demandé */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  display: flex; /* Assure centrage SVG */
+  justify-content: center;
+  align-items: center;
+}
+
+.controls .play-pause-btn svg {
+  width: 30px; /* Taille SVG dans Play/Pause */
+  height: 30px;
+  fill: var(--spotify-black);
+}
+
+.controls .play-pause-btn:hover:not(:disabled) {
+  background-color: #f0f0f0;
+  color: var(--spotify-black);
+  transform: scale(1.05);
+}
+.controls .play-pause-btn:active:not(:disabled) {
+  transform: scale(0.95);
+  background-color: #e0e0e0;
+}
+
+/* --- STYLES POUR LA VUE LISTE --- */
+
+/* Conteneur spécifique pour la vue playlist */
+.playlist-view-container {
+  width: 90%;
+  max-width: 500px; /* Peut être plus large que le lecteur */
+  padding: 0 10px; /* Ajuste le padding si nécessaire */
+  /* Pas de fond spécifique, prend celui du body */
+}
+
+.playlist-title {
+  color: var(--spotify-white);
+  font-size: 1.2em;
+  margin-top: 0; /* Pas de marge haute si c'est le premier élément */
+  margin-bottom: 15px;
+  font-weight: 600;
+  width: 100%;
+  text-align: center;
+}
+
+.playlist-list {
+  width: 100%;
+  max-height: calc(100vh - 140px); /* Hauteur = hauteur écran - padding body - hauteur nav - marge titre */
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--spotify-gray) transparent;
+}
+.playlist-list::-webkit-scrollbar { width: 8px; }
+.playlist-list::-webkit-scrollbar-track { background: transparent; }
+.playlist-list::-webkit-scrollbar-thumb { background-color: var(--spotify-gray); border-radius: 4px; }
+
+.playlist-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  text-align: left;
+}
+
+.playlist-item:hover { background-color: var(--spotify-gray); }
+
+.playlist-item.playing { background-color: rgba(40, 40, 40, 0.8); }
+
+.playlist-item-cover {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.playlist-item-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.playlist-item-title {
+  color: var(--spotify-white);
+  font-size: 0.9em;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.playlist-item-artist {
+  color: var(--spotify-light-gray);
+  font-size: 0.8em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.playing-indicator {
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+.playing-indicator.paused path { fill: var(--spotify-light-gray); }
+
+.playlist-empty {
+  color: var(--spotify-light-gray);
+  padding: 20px;
+  text-align: center;
+}
+
+
+/* --- NOUVEAUX STYLES POUR LA NAVIGATION EN BAS --- */
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background-color: var(--spotify-gray);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+}
+
+.nav-button {
+  background: none;
+  border: none;
+  color: var(--spotify-light-gray);
+  cursor: pointer;
+  flex-grow: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.7em;
+  padding: 5px 0;
+  transition: color 0.2s ease;
+}
+
+.nav-button svg {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 3px;
+  fill: currentColor; /* Hérite la couleur du bouton */
+}
+
+.nav-button:hover {
+  color: var(--spotify-white);
+}
+
+/* Style du bouton actif dans la nav */
+.nav-button.active {
+  color: var(--spotify-green); /* Applique la couleur verte */
+}
+.nav-button.active:hover {
+  color: #1fdf64; /* Optionnel: légère variation au survol */
+}
+
+
+/* --- SUPPRESSION DES ANCIENS STYLES --- */
+/* Les règles pour .toggle-view-btn ont été supprimées */
+
+
+/* --- AJUSTEMENTS RESPONSIVE --- */
+
+@media (max-width: 480px) {
+  /* Ajuster le padding du body pour la nav */
+   body {
+      padding-bottom: 65px; /* Un peu plus si besoin */
+   }
+   .app-wrapper {
+      padding-bottom: 0; /* Le padding est sur le body */
+   }
+   .main-content {
+      padding: 10px 0; /* Moins de padding vertical */
+   }
+
   .player-container {
-    /* Garder les styles existants : background, padding, border-radius, box-shadow, text-align, width, max-width, display: flex, flex-direction: column, align-items: center */
-    /* Supprimer position:relative et padding-top:50px */
-     margin: 20px 0; /* Ajouter marge verticale si besoin */
+    width: 100%; /* Prend toute la largeur */
+    max-width: none; /* Pas de max-width */
+    min-height: calc(100vh - 65px); /* Prend hauteur restante */
+    border-radius: 0;
+    justify-content: center; /* Centre verticalement approx */
+    padding: 20px 15px;
+    box-sizing: border-box;
+    margin: 0; /* Pas de marge verticale sur mobile */
   }
+  .cover-art img {
+    width: 65vw;
+    height: 65vw;
+  }
+   .track-info h2 { font-size: 1.2em; }
+   .track-info p { font-size: 0.9em; }
 
-  /* Conteneur spécifique pour la vue playlist */
-   .playlist-view-container {
-      width: 90%;
-      max-width: 500px; /* Plus large pour la liste */
-      padding: 20px;
-      margin-top: 20px; /* Espace en haut */
+  /* Ajuster taille des contrôles pour mobile si besoin */
+   .controls .play-pause-btn {
+     width: 65px;
+     height: 65px;
    }
-   .playlist-view-container .playlist-list {
-       max-height: calc(100vh - 180px); /* Ajuster la hauteur max pour laisser voir le titre et la nav */
+   .controls .play-pause-btn svg {
+     width: 32px;
+     height: 32px;
+   }
+    .controls button:not(.play-pause-btn) svg {
+       width: 30px; /* Taille Préc/Suivant mobile */
+       height: 30px;
    }
 
+   /* Ajustement playlist sur mobile */
+    .playlist-view-container {
+        width: 100%;
+        max-width: none;
+        padding: 15px;
+        margin-top: 0;
+        height: calc(100vh - 65px); /* Prend toute la hauteur dispo */
+        display: flex;
+        flex-direction: column;
+    }
+     .playlist-view-container .playlist-list {
+        max-height: none; /* Pas de max-height fixe */
+        flex-grow: 1; /* Prend l'espace restant */
+        margin-bottom: 0; /* Pas de marge en bas */
+     }
+      .playlist-title {
+          margin-top: 5px;
+          margin-bottom: 10px;
+          font-size: 1.1em;
+      }
 
-  /* Barre de navigation en bas */
-  .bottom-nav {
-    position: fixed; /* Fixe en bas de l'écran */
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 60px; /* Hauteur de la barre */
-    background-color: var(--spotify-gray); /* Fond gris foncé */
-    display: flex;
-    justify-content: space-around; /* Espace équitablement les boutons */
-    align-items: center;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3); /* Ombre en haut */
-    z-index: 100; /* Pour être au dessus de tout */
-  }
-
-  .nav-button {
-    background: none;
-    border: none;
-    color: var(--spotify-light-gray);
-    cursor: pointer;
-    flex-grow: 1; /* Prend l'espace disponible */
-    height: 100%; /* Prend toute la hauteur de la barre */
-    display: flex;
-    flex-direction: column; /* Icône au dessus du texte */
-    justify-content: center;
-    align-items: center;
-    font-size: 0.7em; /* Petite taille de texte */
-    padding: 5px 0;
-    transition: color 0.2s ease;
-  }
-
-  .nav-button svg {
-    width: 24px;
-    height: 24px;
-    margin-bottom: 3px; /* Espace entre icône et texte */
-    fill: currentColor;
-  }
-
-  .nav-button:hover {
-    color: var(--spotify-white);
-  }
-
-  .nav-button.active {
-    color: var(--spotify-green); /* Vert si actif */
-  }
-  .nav-button.active:hover {
-     color: #1fdf64; /* Vert un peu plus clair au survol si actif */
-  }
-
-  /* Assurer que le conteneur lecteur n'a pas de marge basse étrange */
-   .player-container .player-controls-area {
-       margin-top: 15px; /* Garder l'espace au dessus des contrôles */
-       padding-top: 0; /* Retirer padding si existait */
-   }
+   /* Ajustement nav mobile */
+    .bottom-nav {
+        height: 60px; /* Garder la même hauteur ou ajuster */
+    }
+     .nav-button svg {
+        width: 22px;
+        height: 22px;
+    }
+    .nav-button span {
+       font-size: 0.65em; /* Texte encore plus petit si besoin */
+    }
+}
