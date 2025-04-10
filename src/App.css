@@ -406,6 +406,7 @@ body {
     padding: 20px 15px;
     box-sizing: border-box;
     margin: 0; /* Pas de marge verticale sur mobile */
+    style={{ border: '3px solid red', marginLeft: 'auto', marginRight: 'auto' }}
   }
   .cover-art img {
     width: 65vw;
