@@ -31,11 +31,8 @@ body {
 
 /* Conteneur du contenu principal (lecteur ou liste) */
 .main-content {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center; /* Centre verticalement si peu de contenu */
-  flex-grow: 1; /* Prend l'espace vertical disponible */
+  display: grid;        
+  place-items: center; 
   padding: 20px 0; /* Ajoute un peu d'air en haut/bas */
 }
 
