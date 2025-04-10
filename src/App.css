@@ -26,7 +26,6 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column; /* Aligne le contenu et la nav verticalement */
-  align-items: center; /* Centre horizontalement */
   min-height: calc(100vh - 70px); /* Hauteur minimum pour le contenu au-dessus de la nav */
 }
 
