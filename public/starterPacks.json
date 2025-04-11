@@ -1,4 +1,4 @@
-// public/starterPacks.json
+
 [
   {
     "id": "sp1",
@@ -15,5 +15,5 @@
     "title": "Durand", 
     "imageSrc": "/starterpacks/pack3.png"
   }
-  // Ajoute autant d'images que tu veux
+
 ]
