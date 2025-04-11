@@ -1,0 +1,19 @@
+// public/starterPacks.json
+[
+  {
+    "id": "sp1",
+    "title": "Wandrille", 
+    "imageSrc": "/starterpacks/wandrilleSP.png"
+  },
+  {
+    "id": "sp2",
+    "title": "Joseph", 
+    "imageSrc": "/starterpacks/josephSP.jpg"
+  },
+  {
+    "id": "sp3",
+    "title": "Durand", 
+    "imageSrc": "/starterpacks/pack3.png"
+  }
+  // Ajoute autant d'images que tu veux
+]

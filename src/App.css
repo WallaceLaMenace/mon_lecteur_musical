@@ -197,3 +197,125 @@ body {
   .nav-button svg { width: 22px; height: 22px; }
   .nav-button span { font-size: 0.65em; }
 }
+
+/* --- NOUVEAUX STYLES POUR LA VUE STARTER PACKS --- */
+
+.starter-pack-view-container {
+  width: 100%; /* Prend toute la largeur */
+  max-width: 600px; /* Un peu plus large peut-être */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.starter-pack-title {
+  color: var(--spotify-white);
+  font-size: 1.2em;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.starter-pack-carousel {
+  display: flex;
+  align-items: center; /* Centre verticalement les boutons et l'image */
+  justify-content: space-between; /* Pousse les boutons sur les côtés */
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.starter-pack-nav {
+  background: none;
+  border: none;
+  color: var(--spotify-light-gray);
+  font-size: 2.5em; /* Grande taille pour les chevrons */
+  cursor: pointer;
+  padding: 0 10px; /* Un peu d'espace autour */
+  transition: color 0.2s ease;
+}
+
+.starter-pack-nav:hover:not(:disabled) {
+  color: var(--spotify-white);
+}
+.starter-pack-nav:disabled {
+    color: var(--spotify-gray);
+    cursor: not-allowed;
+}
+
+
+.starter-pack-image-frame {
+  /* Le "cadre" autour de l'image */
+  flex-grow: 1; /* Prend l'espace central */
+  /* Optionnel: ajouter un style de cadre */
+  /* padding: 10px; */
+  /* background-color: var(--spotify-gray); */
+  /* border-radius: 12px; */
+  /* max-width: 80%; */ /* Limiter la largeur du cadre */
+  margin: 0 10px; /* Espace par rapport aux boutons */
+  display: flex; /* Utile si on ajoute du texte dans le cadre */
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.starter-pack-image {
+  display: block; /* Pour enlever l'espace sous l'image */
+  max-width: 100%; /* Image s'adapte à la largeur du cadre */
+  max-height: 60vh; /* Limite la hauteur de l'image */
+  height: auto; /* Garde les proportions */
+  border-radius: 8px; /* Coins arrondis */
+  box-shadow: 0 5px 15px rgba(0,0,0,0.4); /* Ombre portée */
+}
+
+.starter-pack-image-title { /* Style si tu ajoutes le titre sous l'image */
+    margin-top: 10px;
+    color: var(--spotify-light-gray);
+    font-size: 0.9em;
+}
+
+/* Styles pour les points de navigation (optionnel) */
+.starter-pack-dots {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.dot {
+    height: 8px;
+    width: 8px;
+    margin: 0 4px;
+    background-color: var(--spotify-gray);
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.dot:hover {
+    background-color: var(--spotify-light-gray);
+}
+
+.dot.active {
+    background-color: var(--spotify-green);
+}
+
+
+/* --- AJUSTEMENTS RESPONSIVE (si besoin) --- */
+@media (max-width: 480px) {
+    .starter-pack-title {
+        font-size: 1.1em;
+        margin-bottom: 15px;
+    }
+    .starter-pack-nav {
+        font-size: 2em; /* Chevrons un peu plus petits */
+        padding: 0 5px;
+    }
+     .starter-pack-image-frame {
+        margin: 0 5px;
+     }
+     /* Ajuster la hauteur max de l'image si elle prend trop de place */
+     .starter-pack-image {
+         max-height: 55vh;
+     }
+}
