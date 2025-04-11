@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import './App.css';
+import './App.css'; // Vérifie que cette ligne est bien active
 
 function App() {
   // États existants
@@ -21,72 +21,171 @@ function App() {
   useEffect(() => {
     fetch('/playlist.json')
       .then(response => {
-          // Vérifie si la réponse réseau est OK (status 200-299)
-          if (!response.ok) {
-            // Si non OK, rejette la promesse pour aller dans le .catch()
-            return Promise.reject(`HTTP error! status: ${response.status}`);
-          }
-          // Si OK, essaie de parser le JSON
+          if (!response.ok) { return Promise.reject(`HTTP error! status: ${response.status}`); }
           return response.json();
       })
       .then(data => {
-         // LOG 1: Affiche les données brutes reçues après le parsing JSON
          console.log('>>> Playlist data fetched:', data);
-
-         // Vérifie si les données sont bien un tableau
          if (!Array.isArray(data)) {
-            // LOG 2 (Erreur): Affiche si ce n'est pas un tableau
             console.error("ERREUR: Playlist data n'est pas un tableau!", data);
-            // Stoppe l'exécution ici en lançant une erreur pour aller dans le .catch()
             throw new Error('Playlist data is not an array');
          }
-
-         // Si c'est bien un tableau, mets à jour l'état
          setPlaylist(data);
-
-         // LOG 3: Confirme que la mise à jour de l'état a été appelée
          console.log('>>> setPlaylist a été appelé.');
       })
       .catch(error => {
-          // LOG 4 (Erreur): Affiche toute erreur survenue durant le fetch, le .json() ou la vérification Array.isArray
           console.error(">>> Erreur DANS CATCH playlist:", error);
       });
-  }, []); // Tableau vide signifie exécuter une seule fois au montage
-
+  }, []);
 
   // --- NOUVEL EFFET pour charger les Starter Packs ---
   useEffect(() => {
     fetch('/starterPacks.json')
       .then(response => response.ok ? response.json() : Promise.reject('Failed to load starter packs'))
       .then(data => {
-         if (!Array.isArray(data)) { throw new Error('Starter pack data is not an array'); }
+         console.log('>>> Starter pack data fetched:', data); // Log ajouté
+         if (!Array.isArray(data)) {
+             console.error("ERREUR: Starter pack data n'est pas un tableau!", data); // Log erreur
+             throw new Error('Starter pack data is not an array');
+         }
          setStarterPacks(data);
+         console.log('>>> setStarterPacks a été appelé.'); // Log ajouté
       })
-      .catch(error => console.error("Erreur chargement starter packs:", error));
+      .catch(error => console.error(">>> Erreur DANS CATCH starter packs:", error)); // Log erreur
   }, []);
 
 
-  // ... (useEffect pour changer la source audio reste pareil) ...
-  useEffect(() => { /* ... */ }, [currentTrackIndex, playlist]);
+  // --- Logique Restaurée : Effet pour changer la source audio ---
+  useEffect(() => {
+    if (playlist.length > 0 && audioRef.current) {
+      if (currentTrackIndex < 0 || currentTrackIndex >= playlist.length) {
+          console.warn("Index de piste invalide:", currentTrackIndex);
+          return;
+      }
+      const currentTrack = playlist[currentTrackIndex];
+      console.log('>>> useEffect[trackIndex] - Nouveau currentTrack:', currentTrack);
+      if (currentTrack && typeof currentTrack.audioSrc === 'string') {
+        // Construit l'URL absolue pour une comparaison fiable
+        const newSrcAbsolute = new URL(currentTrack.audioSrc, window.location.href).href;
+        const currentSrcAbsolute = audioRef.current.src ? new URL(audioRef.current.src, window.location.href).href : null;
 
-  // ... (useEffect pour gérer play/pause reste pareil) ...
-  useEffect(() => { /* ... */ }, [isPlaying]);
+        // Change seulement si la source est différente
+        if (newSrcAbsolute !== currentSrcAbsolute) {
+           console.log('>>> Changement de source audio vers:', newSrcAbsolute);
+           audioRef.current.src = currentTrack.audioSrc; // Chemin relatif est ok ici
+           audioRef.current.load(); // Important pour charger la nouvelle source
+
+           // Si on doit jouer directement après le changement
+           if (isPlaying) {
+             // Laisse l'autre useEffect (celui sur [isPlaying]) gérer le play()
+             // pour éviter les conditions de course ou double appel.
+             // Ou on peut tenter un play ici, mais l'autre effet est plus propre.
+              let playPromise = audioRef.current.play();
+              if (playPromise !== undefined) {
+                playPromise.catch(e => console.error("Play error on src change direct:", e));
+              }
+           }
+        }
+      } else {
+        console.error('>>> useEffect[trackIndex] - audioSrc invalide pour la piste:', currentTrack);
+      }
+    }
+  }, [currentTrackIndex, playlist]); // Déclenché si l'index ou la playlist change
+
+
+  // --- Logique Restaurée : Effet pour gérer play/pause ---
+  useEffect(() => {
+    if (!audioRef.current) return; // Ne rien faire si la ref audio n'est pas prête
+
+    if (isPlaying) {
+      // Essaye de jouer si l'état est 'playing'
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.error("Play error on isPlaying change:", error);
+          // Si l'erreur est due à une interaction utilisateur manquante,
+          // on remet isPlaying à false pour que l'UI soit cohérente.
+          if (error.name === 'NotAllowedError' || error.name === 'NotSupportedError') {
+            setIsPlaying(false);
+          }
+        });
+      }
+    } else {
+      // Met en pause si l'état est 'paused'
+      audioRef.current.pause();
+    }
+  }, [isPlaying]); // Déclenché seulement si isPlaying change
 
 
   // ----- Gestionnaires d'événements de l'élément <audio> -----
-  const handleTimeUpdate = () => { /* ... */ };
-  const handleLoadedMetadata = () => { /* ... */ };
-  const handleTrackEnd = () => { playNext(); };
+  const handleTimeUpdate = () => {
+    if (audioRef.current) {
+        setCurrentTime(audioRef.current.currentTime);
+    }
+  };
+  const handleLoadedMetadata = () => {
+     if (audioRef.current) {
+        setDuration(audioRef.current.duration);
+     }
+  };
+  const handleTrackEnd = () => {
+    console.log("Track ended, playing next.");
+    playNext();
+  };
 
 
-  // ----- Fonctions de contrôle Audio -----
-  const togglePlayPause = () => { /* ... */ };
-  const playNext = () => { /* ... */ };
-  const playPrevious = () => { /* ... */ };
-  const handleProgressChange = (event) => { /* ... */ };
-  const formatTime = (timeInSeconds) => { /* ... */ };
-  const handleSelectTrack = (index) => { /* ... */ };
+  // ----- Fonctions de contrôle Audio (Restaurées) -----
+  const togglePlayPause = () => {
+    if (playlist.length === 0 || !audioRef.current) return;
+    setIsPlaying(!isPlaying);
+  };
 
+  const playNext = () => {
+    if (playlist.length === 0) return;
+    const nextIndex = (currentTrackIndex + 1) % playlist.length;
+    setCurrentTrackIndex(nextIndex);
+    // Optionnel: forcer la lecture même si en pause ? Généralement non.
+    // setIsPlaying(true); // A décommenter si on veut *toujours* jouer au suivant
+    console.log("playNext called, new index:", nextIndex);
+  };
+
+  const playPrevious = () => {
+    if (playlist.length === 0) return;
+    const prevIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+    setCurrentTrackIndex(prevIndex);
+    // Optionnel: forcer la lecture même si en pause ? Généralement non.
+    // setIsPlaying(true); // A décommenter si on veut *toujours* jouer au précédent
+    console.log("playPrevious called, new index:", prevIndex);
+  };
+
+  const handleProgressChange = (event) => {
+    if (!audioRef.current || isNaN(duration) || duration === 0) return; // Vérifie duration
+    const newTime = Number(event.target.value);
+    audioRef.current.currentTime = newTime;
+    setCurrentTime(newTime); // Met à jour l'UI immédiatement
+  };
+
+  // ----- Formatage du temps (Restauré)-----
+  const formatTime = (timeInSeconds) => {
+    if (isNaN(timeInSeconds) || timeInSeconds < 0) { return '0:00'; }
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = Math.floor(timeInSeconds % 60);
+    return `<span class="math-inline">\{minutes\}\:</span>{seconds < 10 ? '0' : ''}${seconds}`;
+  };
+
+  // ----- Gestion vue et sélection (Restaurée)-----
+  const handleSelectTrack = (index) => {
+     if (index < 0 || index >= playlist.length) return; // Sécurité
+
+     if (index !== currentTrackIndex) {
+         setCurrentTrackIndex(index);
+         setIsPlaying(true); // Lance la lecture du nouveau morceau
+     } else {
+         // Si on clique sur le morceau déjà en cours, on bascule play/pause
+         togglePlayPause();
+     }
+     setViewMode('player'); // Rebascule vers la vue lecteur après sélection
+   };
 
   // --- NOUVELLES FONCTIONS pour Starter Packs ---
   const nextStarterPack = () => {
@@ -102,15 +201,16 @@ function App() {
 
   // ----- Rendu du composant -----
 
-  const currentTrack = playlist[currentTrackIndex];
+  const currentTrack = playlist[currentTrackIndex]; // Peut être undefined si playlist vide
   const progressPercent = duration ? (currentTime / duration) * 100 : 0;
-  const currentStarterPack = starterPacks[currentPackIndex]; // Récupère le pack actuel
-  console.log('>>> RENDERING - viewMode:', viewMode);
-  console.log('>>> RENDERING - playlist state (contenu):', playlist); // Affiche le contenu réel
-  console.log('>>> RENDERING - currentTrackIndex:', currentTrackIndex);
-  console.log('>>> RENDERING - currentTrack object:', currentTrack); // currentTrack est défini plus haut
+  const currentStarterPack = starterPacks[currentPackIndex]; // Peut être undefined
 
-// --- FIN LOGS AJOUTES ---
+  // Logs de rendu (gardés pour débogage si besoin)
+  console.log('>>> RENDERING - viewMode:', viewMode);
+  console.log('>>> RENDERING - playlist state (contenu):', playlist);
+  console.log('>>> RENDERING - currentTrackIndex:', currentTrackIndex);
+  console.log('>>> RENDERING - currentTrack object:', currentTrack);
+
 
   return (
     <div className="app-wrapper">
@@ -118,117 +218,100 @@ function App() {
       {/* Contenu Principal qui change selon la vue */}
       <div className="main-content">
 
-        {/* --- Vue Lecteur --- */}
+        {/* --- Vue Lecteur (JSX Restauré) --- */}
         {viewMode === 'player' && (
           <div className="player-container">
-             {/* ... contenu du lecteur ... */}
-             {currentTrack ? ( <>{/* ... cover, info, controls ... */} </> ) : ( <div>Aucune piste...</div>)}
-             <div className="player-controls-area"> {/* ... audio, progress, controls ... */} </div>
-          </div>
+            {currentTrack ? (
+              <>
+                <div className="cover-art">
+                  <img
+                    key={currentTrack.id || currentTrackIndex} // Change key on track change
+                    src={currentTrack.coverSrc || '/default-cover.png'}
+                    alt={`Jaquette de ${currentTrack.title}`}
+                    onError={(e) => e.target.src = '/default-cover.png'}
+                  />
+                </div>
+                <div className="track-info">
+                  <h2>{currentTrack.title}</h2>
+                  <p>{currentTrack.artist}</p>
+                </div>
+              </>
+            ) : (
+              // Fallback si pas de piste (playlist vide ou index invalide)
+              <div className="track-info">
+                <h2>{playlist.length > 0 ? "Erreur piste" : "Playlist vide"}</h2>
+                <p>Chargez une playlist valide.</p>
+              </div>
+            )}
+
+            {/* Zone des contrôles du lecteur (Restaurée) */}
+            <div className="player-controls-area">
+              <audio
+                ref={audioRef}
+                onTimeUpdate={handleTimeUpdate}
+                onLoadedMetadata={handleLoadedMetadata}
+                onEnded={handleTrackEnd}
+                preload="metadata" // Précharge les métadonnées
+                // Ne pas mettre src ici, géré par useEffect
+              />
+              <div className="progress-bar">
+                <span>{formatTime(currentTime)}</span>
+                <input
+                  type="range"
+                  min="0" max={duration || 0} value={currentTime}
+                  onChange={handleProgressChange}
+                  disabled={!currentTrack || !duration || isNaN(duration)} // Désactive si pas de piste ou durée invalide
+                  style={{ '--progress-percent': `${progressPercent}%` }}
+                  aria-label="Barre de progression"
+                />
+                <span>{formatTime(duration)}</span>
+              </div>
+              <div className="controls">
+                <button onClick={playPrevious} disabled={playlist.length < 2} aria-label="Précédent">
+                  <svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 6h2v12H6zm3.5 6 8.5 6V6z"></path></svg>
+                </button>
+                <button onClick={togglePlayPause} className="play-pause-btn" disabled={!currentTrack} aria-label={isPlaying ? 'Pause' : 'Lecture'}>
+                  {isPlaying ? (
+                    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"></path></svg>
+                  )}
+                </button>
+                <button onClick={playNext} disabled={playlist.length < 2} aria-label="Suivant">
+                   <svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"></path></svg>
+                </button>
+              </div>
+            </div> {/* Fin player-controls-area */}
+          </div> // Fin player-container
         )}
 
-        {/* --- Vue Liste --- */}
+        {/* --- Vue Liste (Mapping Restauré) --- */}
         {viewMode === 'playlist' && (
           <div className="playlist-view-container">
-             <h2 className="playlist-title">Liste de lecture</h2>
-             <div className="playlist-list">
-                {/* ... mapping de la playlist ... */}
-             </div>
-          </div>
-        )}
-
-        {/* --- NOUVELLE VUE Starter Packs --- */}
-        {viewMode === 'starterPack' && (
-          <div className="starter-pack-view-container">
-            <h2 className="starter-pack-title">Starter Packs</h2>
-            {starterPacks.length > 0 && currentStarterPack ? (
-              <div className="starter-pack-carousel">
-                <button
-                    onClick={prevStarterPack}
-                    className="starter-pack-nav prev"
-                    aria-label="Précédent Pack"
-                    disabled={starterPacks.length < 2} // Désactiver si < 2 packs
-                 >
-                   &#10094; {/* Chevron gauche */}
-                </button>
-
-                <div className="starter-pack-image-frame"> {/* Le cadre autour de l'image */}
-                   <img
-                     // Utilise une clé qui change pour forcer le rechargement/transition (optionnel)
-                     key={currentStarterPack.id || currentPackIndex}
-                     src={currentStarterPack.imageSrc}
-                     alt={currentStarterPack.title || `Starter Pack ${currentPackIndex + 1}`}
-                     className="starter-pack-image"
-                     onError={(e) => e.target.style.display='none'} // Masquer si erreur image
-                   />
-                   {/* Tu pourrais ajouter le titre ici si tu veux */}
-                   {/* <p className="starter-pack-image-title">{currentStarterPack.title}</p> */}
-                </div>
-
-                <button
-                    onClick={nextStarterPack}
-                    className="starter-pack-nav next"
-                    aria-label="Suivant Pack"
-                    disabled={starterPacks.length < 2} // Désactiver si < 2 packs
-                 >
-                    &#10095; {/* Chevron droit */}
-                 </button>
-              </div>
-            ) : (
-              <p>Chargement des starter packs...</p>
-            )}
-             {/* Indicateur de position (optionnel) */}
-             <div className="starter-pack-dots">
-                {starterPacks.map((pack, index) => (
-                    <span
-                        key={pack.id || index}
-                        className={`dot ${index === currentPackIndex ? 'active' : ''}`}
-                        onClick={() => setCurrentPackIndex(index)} // Permet de cliquer sur les points
-                    ></span>
-                ))}
-             </div>
-          </div>
-        )}
-
-      </div> {/* Fin main-content */}
-
-
-      {/* Barre de Navigation Fixe en Bas (Modifiée) */}
-      <nav className="bottom-nav">
-         {/* NOUVEAU BOUTON STARTER PACKS (tout à gauche) */}
-         <button
-           className={`nav-button ${viewMode === 'starterPack' ? 'active' : ''}`}
-           onClick={() => setViewMode('starterPack')}
-           aria-label="Afficher les Starter Packs"
-         >
-           {/* Icône exemple (à remplacer par une meilleure si tu as) */}
-           <svg viewBox="0 0 24 24"><path fill="currentColor" d="M21 11.01L3 11v2h18zM3 16h18v2H3zM21 6H3v2.01L21 8z"></path></svg>
-           <span>Starter Packs</span>
-         </button>
-
-         {/* Bouton Lecteur */}
-         <button
-           className={`nav-button ${viewMode === 'player' ? 'active' : ''}`}
-           onClick={() => setViewMode('player')}
-           aria-label="Afficher le lecteur"
-         >
-           <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"></path></svg>
-           <span>Lecteur</span>
-         </button>
-
-         {/* Bouton Playlist */}
-         <button
-           className={`nav-button ${viewMode === 'playlist' ? 'active' : ''}`}
-           onClick={() => setViewMode('playlist')}
-           aria-label="Afficher la liste de lecture"
-         >
-            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M3 13h2v-2H3zm0 4h2v-2H3zm0-8h2V7H3zm4 4h14v-2H7zm0 4h14v-2H7zm0-8h14V7H7z"></path></svg>
-           <span>Playlist</span>
-         </button>
-      </nav>
-
-    </div> // Fin app-wrapper
-  );
-}
-
-export default App;
+            <h2 className="playlist-title">Liste de lecture</h2>
+            <div className="playlist-list">
+              {playlist.length > 0 ? (
+                playlist.map((track, index) => (
+                  <div
+                    key={track.id?.toString() || index} // Clé plus robuste
+                    className={`playlist-item ${index === currentTrackIndex ? 'playing' : ''}`}
+                    onClick={() => handleSelectTrack(index)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && handleSelectTrack(index)}
+                  >
+                    <img
+                      src={track.coverSrc || '/default-cover.png'}
+                      alt=""
+                      className="playlist-item-cover"
+                      onError={(e) => e.target.src = '/default-cover.png'}
+                      loading="lazy"
+                    />
+                    <div className="playlist-item-info">
+                      <span className="playlist-item-title">{track.title}</span>
+                      <span className="playlist-item-artist">{track.artist}</span>
+                    </div>
+                    {/* Indicateur visuel si le morceau est en cours */}
+                    {index === currentTrackIndex && (
+                      isPlaying ? (
+                         <svg className="playing-indicator" viewBox="0 0 24 24"><path fill="var(--spotify-green)" d="M
