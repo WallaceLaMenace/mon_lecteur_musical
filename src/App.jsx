@@ -20,13 +20,39 @@ function App() {
   // Effet pour charger la playlist
   useEffect(() => {
     fetch('/playlist.json')
-      .then(response => response.ok ? response.json() : Promise.reject('Failed to load playlist'))
-      .then(data => {
-        if (!Array.isArray(data)) { throw new Error('Playlist data is not an array'); }
-        setPlaylist(data);
+      .then(response => {
+          // Vérifie si la réponse réseau est OK (status 200-299)
+          if (!response.ok) {
+            // Si non OK, rejette la promesse pour aller dans le .catch()
+            return Promise.reject(`HTTP error! status: ${response.status}`);
+          }
+          // Si OK, essaie de parser le JSON
+          return response.json();
       })
-      .catch(error => console.error("Erreur chargement playlist:", error));
-  }, []);
+      .then(data => {
+         // LOG 1: Affiche les données brutes reçues après le parsing JSON
+         console.log('>>> Playlist data fetched:', data);
+
+         // Vérifie si les données sont bien un tableau
+         if (!Array.isArray(data)) {
+            // LOG 2 (Erreur): Affiche si ce n'est pas un tableau
+            console.error("ERREUR: Playlist data n'est pas un tableau!", data);
+            // Stoppe l'exécution ici en lançant une erreur pour aller dans le .catch()
+            throw new Error('Playlist data is not an array');
+         }
+
+         // Si c'est bien un tableau, mets à jour l'état
+         setPlaylist(data);
+
+         // LOG 3: Confirme que la mise à jour de l'état a été appelée
+         console.log('>>> setPlaylist a été appelé.');
+      })
+      .catch(error => {
+          // LOG 4 (Erreur): Affiche toute erreur survenue durant le fetch, le .json() ou la vérification Array.isArray
+          console.error(">>> Erreur DANS CATCH playlist:", error);
+      });
+  }, []); // Tableau vide signifie exécuter une seule fois au montage
+
 
   // --- NOUVEL EFFET pour charger les Starter Packs ---
   useEffect(() => {
