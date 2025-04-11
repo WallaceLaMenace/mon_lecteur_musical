@@ -311,7 +311,12 @@ function App() {
                       <span className="playlist-item-title">{track.title}</span>
                       <span className="playlist-item-artist">{track.artist}</span>
                     </div>
-                    {/* Indicateur visuel si le morceau est en cours */}
-                    {index === currentTrackIndex && (
-                      isPlaying ? (
-                         <svg className="playing-indicator" viewBox="0 0 24 24"><path fill="var(--spotify-green)" d="M
+                  {/* Indicateur visuel si le morceau est en cours */}
+                  {index === currentTrackIndex && ( // Vérifie si c'est la piste actuelle
+                    isPlaying ? ( // Si elle joue
+                       <svg className="playing-indicator" viewBox="0 0 24 24"><path fill="var(--spotify-green)" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"></path></svg>
+                    ) : ( // Si elle est en pause
+                       <svg className="playing-indicator paused" viewBox="0 0 24 24"><path fill="var(--spotify-light-gray)" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"></path></svg>
+                    )
+                  )}
+                  {/* Fin de l'indicateur visuel */}
