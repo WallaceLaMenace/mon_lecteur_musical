@@ -105,7 +105,12 @@ function App() {
   const currentTrack = playlist[currentTrackIndex];
   const progressPercent = duration ? (currentTime / duration) * 100 : 0;
   const currentStarterPack = starterPacks[currentPackIndex]; // Récupère le pack actuel
+  console.log('>>> RENDERING - viewMode:', viewMode);
+  console.log('>>> RENDERING - playlist state (contenu):', playlist); // Affiche le contenu réel
+  console.log('>>> RENDERING - currentTrackIndex:', currentTrackIndex);
+  console.log('>>> RENDERING - currentTrack object:', currentTrack); // currentTrack est défini plus haut
 
+// --- FIN LOGS AJOUTES ---
 
   return (
     <div className="app-wrapper">
