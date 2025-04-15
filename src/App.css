@@ -123,11 +123,7 @@ body {
   margin-top: 15px;
 }
 
-/* (Styles détaillés des boutons .controls comme avant) */
-.controls { display: grid; grid-template-columns: auto auto auto auto auto; justify-content: center; align-items: center; column-gap: 20px; width: 100%; margin-top: 15px; }
 .controls button { background: none; border: none; color: var(--spotify-light-gray); cursor: pointer; padding: 5px; transition: color 0.2s ease, transform 0.1s ease; display: flex; justify-content: center; align-items: center; line-height: 0; }
-.controls .shuffle-button, 
-.controls .repeat-button 
 .controls .shuffle-button svg, .controls .repeat-button svg { width: 28px; height: 28px; fill: currentColor; }
 .controls button[aria-label="Précédent"] svg, .controls button[aria-label="Suivant"] svg { width: 28px; height: 28px; fill: currentColor; }
 .controls .play-pause-btn { background-color: var(--spotify-white); color: var(--spotify-black); border-radius: 50%; width: 60px; height: 60px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: background-color 0.2s ease, transform 0.1s ease; }
