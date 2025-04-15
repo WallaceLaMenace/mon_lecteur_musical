@@ -319,3 +319,65 @@ body {
          max-height: 55vh;
      }
 }
+
+/* Style pour le bouton Shuffle (et potentiellement Repeat plus tard) */
+.controls .shuffle-button,
+.controls .repeat-button { /* Ajout pour futur bouton Repeat */
+    /* Styles communs aux petits boutons de contrôle */
+    background: none;
+    border: none;
+    color: var(--spotify-light-gray);
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+}
+
+.controls .shuffle-button svg,
+.controls .repeat-button svg {
+    width: 20px; /* Un peu plus petit que Préc/Suivant peut-être */
+    height: 20px;
+    fill: currentColor;
+}
+
+.controls .shuffle-button:hover:not(:disabled),
+.controls .repeat-button:hover:not(:disabled) {
+    color: var(--spotify-white);
+}
+
+.controls .shuffle-button:disabled,
+.controls .repeat-button:disabled {
+    color: var(--spotify-gray);
+    cursor: not-allowed;
+}
+
+
+/* Style spécifique pour l'état ACTIF du bouton Shuffle/Repeat */
+.controls .shuffle-button.active,
+.controls .repeat-button.active {
+    color: var(--spotify-green); /* Vert quand actif */
+}
+
+/* Optionnel: Ajuster l'ordre visuel avec flex order si besoin */
+/* .controls .shuffle-button { order: -1; } */ /* Pour le mettre tout à gauche */
+
+
+/* Ajuster l'espacement global des contrôles si nécessaire */
+.controls {
+    /* gap: 20px; */ /* Réduire le gap si ça devient trop serré */
+    justify-content: space-evenly; /* Ou utiliser space-evenly pour mieux répartir ? */
+}
+
+/* Ajustement responsive si besoin */
+@media (max-width: 480px) {
+    .controls .shuffle-button svg,
+    .controls .repeat-button svg {
+        width: 18px;
+        height: 18px;
+    }
+     .controls {
+        gap: 15px; /* Ajuster le gap sur mobile */
+     }
+}

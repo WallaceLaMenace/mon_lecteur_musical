@@ -10,10 +10,9 @@ function App() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [viewMode, setViewMode] = useState('player'); // 'player', 'playlist', ou 'starterPack'
-
-  // --- NOUVEAUX ETATS pour Starter Packs ---
   const [starterPacks, setStarterPacks] = useState([]); // Liste des images/packs
   const [currentPackIndex, setCurrentPackIndex] = useState(0); // Index de l'image affichée
+  const [isShuffle, setIsShuffle] = useState(false); // false = désactivé, true = activé
 
   const audioRef = useRef(null);
 
@@ -153,21 +152,57 @@ function App() {
     setIsPlaying(prevIsPlaying => !prevIsPlaying); // Utilisation de la fonction de mise à jour
   };
 
-  const playNext = () => {
-    if (playlist.length === 0) return;
-    const nextIndex = (currentTrackIndex + 1) % playlist.length;
-    setCurrentTrackIndex(nextIndex);
-    console.log("playNext called, new index:", nextIndex);
-    // La lecture sera gérée par les useEffect en fonction de isPlaying
-  };
-
-  const playPrevious = () => {
-    if (playlist.length === 0) return;
-    const prevIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
-    setCurrentTrackIndex(prevIndex);
-    console.log("playPrevious called, new index:", prevIndex);
-     // La lecture sera gérée par les useEffect en fonction de isPlaying
-  };
+    // --- Fonction MODIFIÉE : playNext ---
+    const playNext = () => {
+      if (playlist.length === 0) return;
+  
+      if (isShuffle) {
+        // Mode Aléatoire activé
+        if (playlist.length <= 1) return; // Rien à faire s'il n'y a qu'un morceau ou moins
+  
+        let randomIndex;
+        // Boucle pour s'assurer qu'on ne rejoue pas le même morceau directement
+        do {
+          randomIndex = Math.floor(Math.random() * playlist.length);
+        } while (randomIndex === currentTrackIndex);
+        console.log("playNext (Shuffle) called, new index:", randomIndex);
+        setCurrentTrackIndex(randomIndex);
+  
+      } else {
+        // Mode Séquentiel (comme avant)
+        const nextIndex = (currentTrackIndex + 1) % playlist.length;
+        console.log("playNext (Sequential) called, new index:", nextIndex);
+        setCurrentTrackIndex(nextIndex);
+      }
+      // Optionnel: remettre isPlaying à true si on veut forcer la lecture ?
+      // if (!isPlaying) setIsPlaying(true);
+    };
+  
+    // --- Fonction MODIFIÉE : playPrevious ---
+    // Pour la simplicité, on fait aussi un aléatoire différent pour "précédent" en mode shuffle
+    // Une vraie gestion d'historique serait plus complexe.
+    const playPrevious = () => {
+      if (playlist.length === 0) return;
+  
+       if (isShuffle) {
+          // Mode Aléatoire activé
+          if (playlist.length <= 1) return;
+          let randomIndex;
+          do {
+              randomIndex = Math.floor(Math.random() * playlist.length);
+          } while (randomIndex === currentTrackIndex);
+          console.log("playPrevious (Shuffle) called, new index:", randomIndex);
+          setCurrentTrackIndex(randomIndex);
+  
+       } else {
+          // Mode Séquentiel (comme avant)
+          const prevIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+          console.log("playPrevious (Sequential) called, new index:", prevIndex);
+          setCurrentTrackIndex(prevIndex);
+       }
+       // Optionnel: remettre isPlaying à true si on veut forcer la lecture ?
+       // if (!isPlaying) setIsPlaying(true);
+    };
 
   const handleProgressChange = (event) => {
     if (!audioRef.current || isNaN(duration) || duration === 0) return;
@@ -204,6 +239,12 @@ function App() {
      // Si on veut pouvoir rester sur la liste après avoir cliqué : commenter la ligne suivante
      setViewMode('player');
    };
+
+     // --- NOUVELLE Fonction pour basculer le mode Shuffle ---
+  const toggleShuffle = () => {
+    setIsShuffle(prevIsShuffle => !prevIsShuffle);
+    console.log("Shuffle mode toggled to:", !isShuffle);
+  };
 
   // --- Fonctions pour Starter Packs ---
   const nextStarterPack = () => {
@@ -285,6 +326,18 @@ function App() {
                 <span>{formatTime(duration)}</span>
               </div>
               <div className="controls">
+                  <button
+                        onClick={toggleShuffle}
+                        className={`shuffle-button ${isShuffle ? 'active' : ''}`} // Classe conditionnelle
+                        aria-label="Aléatoire"
+                        aria-pressed={isShuffle} // Pour l'accessibilité
+                        disabled={playlist.length < 2} // Désactiver si < 2 pistes
+                    >
+                        {/* Icône Shuffle SVG */}
+                        <svg viewBox="0 0 24 24" width="22" height="22"> {/* Ajuste la taille si besoin */}
+                            <path fill="currentColor" d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"></path>
+                        </svg>
+                    </button>
                  <button onClick={playPrevious} disabled={playlist.length < 2} aria-label="Précédent">
                    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M6 6h2v12H6zm3.5 6 8.5 6V6z"></path></svg>
                  </button>
