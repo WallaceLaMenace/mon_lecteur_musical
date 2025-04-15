@@ -326,7 +326,7 @@ function App() {
                 <span>{formatTime(duration)}</span>
               </div>
               <div className="controls">
-                  <button
+                 <button
                         onClick={toggleShuffle}
                         className={`shuffle-button ${isShuffle ? 'active' : ''}`} // Classe conditionnelle
                         aria-label="Aléatoire"

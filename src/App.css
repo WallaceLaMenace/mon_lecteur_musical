@@ -113,13 +113,20 @@ body {
 
 /* Contrôles Play/Pause/Next/Prev */
 .controls {
-  display: flex;
-  justify-content: space-around;
+  /* --- NOUVELLE Configuration GRID --- */
+  display: grid;
+  /* Définit 5 colonnes, chacune prend la largeur de son contenu ('auto') */
+  grid-template-columns: auto auto auto auto auto;
+  /* Centre l'ensemble des colonnes horizontalement s'il reste de la place */
+  justify-content: center;
+  /* Centre les boutons verticalement dans leur cellule de grille */
   align-items: center;
-  gap: 15px;
+  /* Espace entre les colonnes (donc entre les boutons) */
+  column-gap: 20px; 
   margin-top: 15px;
   width: 100%;
 }
+
 /* (Styles détaillés des boutons .controls comme avant) */
 .controls button { background: none; border: none; color: var(--spotify-light-gray); cursor: pointer; padding: 5px; transition: color 0.2s ease, transform 0.1s ease; display: flex; justify-content: center; align-items: center; }
 .controls button:not(.play-pause-btn) svg { width: 28px; height: 28px; fill: currentColor; }
