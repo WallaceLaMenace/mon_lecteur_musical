@@ -113,30 +113,34 @@ body {
 
 /* Contrôles Play/Pause/Next/Prev */
 .controls {
-  /* --- NOUVELLE Configuration GRID --- */
   display: grid;
-  /* Définit 5 colonnes, chacune prend la largeur de son contenu ('auto') */
+  /* 5 colonnes pour 5 boutons */
   grid-template-columns: auto auto auto auto auto;
-  /* Centre l'ensemble des colonnes horizontalement s'il reste de la place */
   justify-content: center;
-  /* Centre les boutons verticalement dans leur cellule de grille */
   align-items: center;
-  /* Espace entre les colonnes (donc entre les boutons) */
-  column-gap: 20px; 
-  margin-top: 15px;
+  column-gap: 20px; /* Ajuste l'espacement si nécessaire */
   width: 100%;
+  margin-top: 15px;
 }
 
 /* (Styles détaillés des boutons .controls comme avant) */
-.controls button { background: none; border: none; color: var(--spotify-light-gray); cursor: pointer; padding: 5px; transition: color 0.2s ease, transform 0.1s ease; display: flex; justify-content: center; align-items: center; }
-.controls button:not(.play-pause-btn) svg { width: 28px; height: 28px; fill: currentColor; }
-.controls button:hover:not(:disabled) { color: var(--spotify-white); }
-.controls button:active:not(:disabled) { transform: scale(0.92); }
-.controls button:disabled { color: var(--spotify-gray); cursor: not-allowed; }
-.controls .play-pause-btn { background-color: var(--spotify-white); color: var(--spotify-black); border-radius: 50%; width: 60px; height: 60px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: background-color 0.2s ease, transform 0.1s ease; display: flex; justify-content: center; align-items: center; }
+.controls { display: grid; grid-template-columns: auto auto auto auto auto; justify-content: center; align-items: center; column-gap: 20px; width: 100%; margin-top: 15px; }
+.controls button { background: none; border: none; color: var(--spotify-light-gray); cursor: pointer; padding: 5px; transition: color 0.2s ease, transform 0.1s ease; display: flex; justify-content: center; align-items: center; line-height: 0; }
+.controls .shuffle-button, 
+.controls .repeat-button 
+.controls .shuffle-button svg, .controls .repeat-button svg { width: 20px; height: 20px; fill: currentColor; }
+.controls button[aria-label="Précédent"] svg, .controls button[aria-label="Suivant"] svg { width: 28px; height: 28px; fill: currentColor; }
+.controls .play-pause-btn { background-color: var(--spotify-white); color: var(--spotify-black); border-radius: 50%; width: 60px; height: 60px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: background-color 0.2s ease, transform 0.1s ease; }
 .controls .play-pause-btn svg { width: 30px; height: 30px; fill: var(--spotify-black); }
+.controls button:not(.play-pause-btn):hover:not(:disabled) { color: var(--spotify-white); }
 .controls .play-pause-btn:hover:not(:disabled) { background-color: #f0f0f0; color: var(--spotify-black); transform: scale(1.05); }
+.controls button:active:not(:disabled) { transform: scale(0.92); }
 .controls .play-pause-btn:active:not(:disabled) { transform: scale(0.95); background-color: #e0e0e0; }
+.controls button:disabled { color: var(--spotify-gray) !important; cursor: not-allowed; opacity: 0.6; }
+.controls .play-pause-btn:disabled { background-color: var(--spotify-gray); opacity: 0.5; color: var(--spotify-dark-gray); }
+.controls .play-pause-btn:disabled svg { fill: var(--spotify-dark-gray); }
+.controls .shuffle-button.active, .controls .repeat-button.active { color: var(--spotify-green); }
+.controls .shuffle-button.active:hover:not(:disabled), .controls .repeat-button.active:hover:not(:disabled) { color: #1fdf64; }
 
 
 /* --- STYLES POUR LA VUE LISTE --- */
