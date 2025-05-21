@@ -176,16 +176,16 @@ body {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: calc(70px + env(safe-area-inset-bottom));
+  height: calc(54px + env(safe-area-inset-bottom));
   background-color: var(--spotify-black);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.5);
   z-index: 100;
-  border-top-left-radius: 18px;
-  border-top-right-radius: 18px;
+  box-shadow: none;
+  border-radius: 0;
   padding-bottom: env(safe-area-inset-bottom);
+  margin-bottom: env(safe-area-inset-bottom);
 }
 
 .nav-button {
@@ -199,34 +199,33 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  font-size: 1em;
-  padding: 10px 0 6px 0;
+  font-size: 0.8em;
+  padding: 0;
   transition: color 0.2s ease;
 }
 
 .nav-button svg {
-  width: 32px;
-  height: 32px;
-  margin-bottom: 4px;
+  width: 22px;
+  height: 22px;
+  margin-bottom: 2px;
   fill: currentColor;
 }
 
 .nav-button span {
-  font-size: 0.95em;
+  font-size: 0.75em;
 }
 
 @media (max-width: 480px) {
   .bottom-nav {
-    height: calc(80px + env(safe-area-inset-bottom));
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
+    height: calc(58px + env(safe-area-inset-bottom));
+    margin-bottom: env(safe-area-inset-bottom);
   }
   .nav-button svg {
-    width: 36px;
-    height: 36px;
+    width: 24px;
+    height: 24px;
   }
   .nav-button span {
-    font-size: 1.1em;
+    font-size: 0.85em;
   }
 }
 
