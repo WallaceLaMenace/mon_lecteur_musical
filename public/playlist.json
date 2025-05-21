@@ -47,5 +47,12 @@
     "artist": "Wallace",
     "audioSrc": "/audio/proutpourlesenfants.mp3",
     "coverSrc": "/covers/prout pour les enfants.png"
+  },
+  {
+    "id": 8,
+    "title": "Jeudi",
+    "artist": "Wallace",
+    "audioSrc": "/audio/jeudi.mp3",
+    "coverSrc": "/covers/Gala.png"
   }
 ]
